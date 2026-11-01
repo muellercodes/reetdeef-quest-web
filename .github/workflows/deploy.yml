@@ -1,11 +1,10 @@
 # Puts the web build of Reetdeef Quest online. The build itself is made on Drew's Mac Studio
 # (tools/mac/web.sh in the game's private repo), uploaded as web.zip to the release tagged
-# "latest", and this workflow publishes it to GitHub Pages.
+# "latest", and this workflow publishes it to GitHub Pages. web.sh starts it on main
+# (Pages only deploys from the default branch, so a release's tag cannot start it).
 name: Deploy the web build
 on:
   workflow_dispatch:
-  release:
-    types: [published]
 permissions:
   contents: read
   pages: write
