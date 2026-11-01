@@ -1,0 +1,36 @@
+# Puts the web build of Reetdeef Quest online. The build itself is made on Drew's Mac Studio
+# (tools/mac/web.sh in the game's private repo), uploaded as web.zip to the release tagged
+# "latest", and this workflow publishes it to GitHub Pages.
+name: Deploy the web build
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Get the build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download latest -R "$GITHUB_REPOSITORY" -p web.zip
+          mkdir site
+          unzip -q web.zip -d site
+          touch site/.nojekyll
+          ls -la site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v4
